@@ -10,6 +10,14 @@ grid info to [api.weather.gov][api] to retrieve the forecast.
 You can pass the address query as a string argument or set the environment variable `WX_DEFAULT_ADDRESS` as a
 fallback.
 
+```bash
+# week forecast
+weather "4600 Silver Hill Rd, Washington, DC 20233"
+
+# hourly forecast
+weather --hourly "4600 Silver Hill Rd, Washington, DC 20233"
+```
+
 This is a simple project for me to learn rust. It doesn't cache anything between invocations, and error
 reporting isn't very good.
 
