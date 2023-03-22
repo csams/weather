@@ -8,8 +8,8 @@ use crate::error;
 /// find the forecast information for the given street address. It contains the resolved address
 /// and the urls to use for getting weekly and hourly forecast data.
 pub fn find(query: &str) -> Result<ForecastInfo, Box<dyn Error>> {
-    let address = resolve_address(query)?;
-    lookup_forecast_info(address)
+    let location = resolve_location(query)?;
+    lookup_forecast_info(location)
 }
 
 /// Holds the resolved address and the endpoints for weekly and hourly forecasts.
@@ -18,8 +18,17 @@ pub struct ForecastInfo {
     pub endpoints: Endpoints,
 }
 
+#[derive(Debug, Deserialize)]
+pub struct Endpoints {
+    #[serde(rename = "forecastHourly")]
+    pub hourly_url: String,
+
+    #[serde(rename = "forecast")]
+    pub weekly_url: String,
+}
+
 /// Looks up latitude and longitude of the resolved street address for the given query.
-fn resolve_address(query: &str) -> Result<Location, Box<dyn Error>> {
+fn resolve_location(query: &str) -> Result<Location, Box<dyn Error>> {
     // benchmark = 4 is the identifier for the "current" dataset.
     let doc: CoordDoc = client::fetch(Query(
         "https://geocoding.geo.census.gov/geocoder/locations/onelineaddress",
@@ -34,7 +43,7 @@ fn resolve_address(query: &str) -> Result<Location, Box<dyn Error>> {
     }
 }
 
-/// Looks up the forecast endpoints to use for the given resolved address.
+/// Looks up the forecast endpoints to use for the given resolved location.
 fn lookup_forecast_info(location: Location) -> Result<ForecastInfo, Box<dyn Error>> {
     let url = format!(
         "https://api.weather.gov/points/{},{}",
@@ -74,13 +83,4 @@ struct Coordinates {
 #[derive(Debug, Deserialize)]
 struct PointsDoc {
     pub properties: Endpoints,
-}
-
-#[derive(Debug, Deserialize)]
-pub struct Endpoints {
-    #[serde(rename = "forecastHourly")]
-    pub hourly_url: String,
-
-    #[serde(rename = "forecast")]
-    pub weekly_url: String,
 }
