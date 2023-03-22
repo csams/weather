@@ -5,7 +5,7 @@ use term_table::{TableBuilder, TableStyle};
 use textwrap;
 
 /// render creates an ascii table from a `Doc`.
-pub fn render(doc: &crate::model::Doc, style: TableStyle) -> String {
+pub fn render(doc: &crate::forecast::Doc, style: TableStyle) -> String {
     let footer = Row::new(vec![
         TableCell::new("Date"),
         TableCell::new("Day"),
@@ -34,11 +34,11 @@ pub fn render(doc: &crate::model::Doc, style: TableStyle) -> String {
         let day = parsed_date.map_or(day_default, |d| d.format("%A").to_string());
         let time = parsed_date.map_or(time_default, |d| d.format("%I %p").to_string());
 
-        let mut temp = format!("{} F", p.temperature);
-        temp = if p.is_daytime {
-            temp.red().to_string()
+        let mut temperature = format!("{} F", p.temperature);
+        temperature = if p.is_daytime {
+            temperature.red().to_string()
         } else {
-            temp.blue().to_string()
+            temperature.blue().to_string()
         };
 
         let short = textwrap::wrap(&p.short_forecast, 60).join("\n");
@@ -52,7 +52,7 @@ pub fn render(doc: &crate::model::Doc, style: TableStyle) -> String {
             TableCell::new(date),
             TableCell::new(day),
             TableCell::new(time),
-            TableCell::new_with_alignment(temp, 1, Alignment::Right),
+            TableCell::new_with_alignment(temperature, 1, Alignment::Right),
             TableCell::new_with_alignment(precip, 1, Alignment::Right),
             TableCell::new(wind),
             TableCell::new(short),

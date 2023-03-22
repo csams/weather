@@ -1,10 +1,10 @@
-fn main() {
-    let url = r"https://api.weather.gov/gridpoints/LZK/77,72/forecast/hourly";
-    let result = weather::Client::new().load(url);
-    let style = weather::style::elegant();
+use clap::Parser;
+use weather::config::{Config, Options};
+use weather::run;
 
-    match result {
-        Ok(doc) => println!("{}", weather::hour::render(&doc, style)),
-        Err(e) => println!("{}", e.to_string()),
+fn main() {
+    let opts = Options::parse();
+    if let Err(s) = Config::new(opts).and_then(run) {
+        println!("{}", s);
     }
 }
