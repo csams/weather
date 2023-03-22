@@ -10,8 +10,9 @@ pub mod lookup;
 pub mod style;
 pub mod week;
 
-use client::Request::*;
 use std::error::Error;
+
+use client::Request::*;
 
 pub fn run(cfg: config::Config) -> Result<(), Box<dyn Error>> {
     let forecast_info = lookup::find(cfg.address.as_str())?;
@@ -31,6 +32,6 @@ pub fn run(cfg: config::Config) -> Result<(), Box<dyn Error>> {
     };
 
     println!("{}", render(&doc, style::elegant()));
-    println!("{}", forecast_info.address);
+    println!("Forecast for: {}", forecast_info.address);
     Ok(())
 }

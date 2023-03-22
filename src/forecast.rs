@@ -51,4 +51,3 @@ pub struct Period {
 pub struct TypedField {
     pub value: Option<i32>,
 }
-

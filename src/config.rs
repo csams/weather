@@ -1,8 +1,9 @@
 use std::env;
 use std::error::Error;
 
-use crate::error;
 use clap::Parser;
+
+use crate::error;
 
 #[derive(Parser)]
 #[command(name = "CLI Weather")]

@@ -1,5 +1,6 @@
-use serde::Deserialize;
 use std::error::Error;
+
+use serde::Deserialize;
 
 type QueryParams<'a> = Vec<(&'a str, &'a str)>;
 

@@ -1,18 +1,12 @@
-use serde::Deserialize;
 use std::error::Error;
+
+use serde::Deserialize;
 
 use crate::client;
 use crate::client::Request::*;
 use crate::error;
 
-/// find the forecast information for the given street address. It contains the resolved address
-/// and the urls to use for getting weekly and hourly forecast data.
-pub fn find(query: &str) -> Result<ForecastInfo, Box<dyn Error>> {
-    let location = resolve_location(query)?;
-    lookup_forecast_info(location)
-}
-
-/// Holds the resolved address and the endpoints for weekly and hourly forecasts.
+/// Contains the resolved address and the urls to use for getting weekly and hourly forecast data.
 pub struct ForecastInfo {
     pub address: String,
     pub endpoints: Endpoints,
@@ -25,6 +19,12 @@ pub struct Endpoints {
 
     #[serde(rename = "forecast")]
     pub weekly_url: String,
+}
+
+/// find the forecast information for the given street address query.
+pub fn find(query: &str) -> Result<ForecastInfo, Box<dyn Error>> {
+    let location = resolve_location(query)?;
+    lookup_forecast_info(location)
 }
 
 /// Looks up latitude and longitude of the resolved street address for the given query.
@@ -55,6 +55,8 @@ fn lookup_forecast_info(location: Location) -> Result<ForecastInfo, Box<dyn Erro
         endpoints: doc.properties,
     })
 }
+
+// Ancillary types for parsing the json
 
 #[derive(Debug, Deserialize)]
 struct CoordDoc {
