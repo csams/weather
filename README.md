@@ -2,8 +2,8 @@
 
 This is a weather utility for the CLI that provides hourly and 7 day forecasts for the United States.
 
-It first uses the [Geocoding Services API][geocoding] of [census.gov][census] to convert free text street
-addresses to latitudes and longitudes. It then uses those coordinates with
+It first uses the [Geocoding Services API][geocoding] of [census.gov][census] to convert a free text street
+address to a latitude and longitude. It then uses those coordinates with
 `https://api.weather.gov/points/{lat},{lon}` to get the corresponding forecast grid. Finally, it passes the
 grid info to [api.weather.gov][api] to retrieve the forecast.
 
