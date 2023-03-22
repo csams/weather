@@ -15,11 +15,13 @@ where
     for<'a> T: Deserialize<'a>,
 {
     let c = reqwest::blocking::Client::new();
-    let req = match req {
+    let obj: T = match req {
         Request::URL(url) => c.get(url),
         Request::Query(url, query) => c.get(url).query(query),
-    };
+    }
+    .header("User-Agent", "weather client")
+    .send()?
+    .json()?;
 
-    let obj: T = req.header("User-Agent", "weather client").send()?.json()?;
     Ok(obj)
 }
