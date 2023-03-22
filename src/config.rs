@@ -6,7 +6,6 @@ use clap::Parser;
 
 #[derive(Parser)]
 #[command(name = "CLI Weather")]
-#[command(author = "Chris S. <cwsams@gmail.com>")]
 #[command(version = "1.0")]
 #[command(about = "Forecasts on the CLI", long_about = None)]
 pub struct Options {
@@ -21,7 +20,7 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn new(o: Options) -> Result<Config, Box<dyn Error>> {
+    pub fn build(o: Options) -> Result<Config, Box<dyn Error>> {
         if let Some(address) = o.address.or(env::var("WX_DEFAULT_ADDRESS").ok()) {
             Ok(Config {
                 hourly: o.hourly,

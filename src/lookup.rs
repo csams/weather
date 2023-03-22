@@ -12,8 +12,14 @@ pub fn find(query: &str) -> Result<ForecastInfo, Box<dyn Error>> {
     lookup_forecast_info(address)
 }
 
+/// Holds the resolved address and the endpoints for weekly and hourly forecasts.
+pub struct ForecastInfo {
+    pub address: String,
+    pub endpoints: Endpoints,
+}
+
 /// Looks up latitude and longitude of the resolved street address for the given query.
-pub fn resolve_address(query: &str) -> Result<Location, Box<dyn Error>> {
+fn resolve_address(query: &str) -> Result<Location, Box<dyn Error>> {
     // benchmark = 4 is the identifier for the "current" dataset.
     let doc: CoordDoc = client::fetch(Query(
         "https://geocoding.geo.census.gov/geocoder/locations/onelineaddress",
@@ -29,7 +35,7 @@ pub fn resolve_address(query: &str) -> Result<Location, Box<dyn Error>> {
 }
 
 /// Looks up the forecast endpoints to use for the given resolved address.
-pub fn lookup_forecast_info(location: Location) -> Result<ForecastInfo, Box<dyn Error>> {
+fn lookup_forecast_info(location: Location) -> Result<ForecastInfo, Box<dyn Error>> {
     let url = format!(
         "https://api.weather.gov/points/{},{}",
         location.coordinates.y, location.coordinates.x
@@ -42,31 +48,31 @@ pub fn lookup_forecast_info(location: Location) -> Result<ForecastInfo, Box<dyn 
 }
 
 #[derive(Debug, Deserialize)]
-pub struct CoordDoc {
+struct CoordDoc {
     pub result: Results,
 }
 
 #[derive(Debug, Deserialize)]
-pub struct Results {
+struct Results {
     #[serde(rename = "addressMatches")]
     pub address_matches: Vec<Location>,
 }
 
 #[derive(Debug, Deserialize, Clone)]
-pub struct Location {
+struct Location {
     #[serde(rename = "matchedAddress")]
     pub address: String,
     pub coordinates: Coordinates,
 }
 
 #[derive(Debug, Deserialize, Clone)]
-pub struct Coordinates {
+struct Coordinates {
     pub x: f64,
     pub y: f64,
 }
 
 #[derive(Debug, Deserialize)]
-pub struct PointsDoc {
+struct PointsDoc {
     pub properties: Endpoints,
 }
 
@@ -77,9 +83,4 @@ pub struct Endpoints {
 
     #[serde(rename = "forecast")]
     pub weekly_url: String,
-}
-
-pub struct ForecastInfo {
-    pub address: String,
-    pub endpoints: Endpoints,
 }

@@ -4,7 +4,7 @@ use weather::run;
 
 fn main() {
     let opts = Options::parse();
-    if let Err(s) = Config::new(opts).and_then(run) {
+    if let Err(s) = Config::build(opts).and_then(run) {
         println!("{}", s);
     }
 }

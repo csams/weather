@@ -1,8 +1,8 @@
 //! weather is a library for loading multi-day forecast information from api.weather.gov and
 //! rendering it.
 
-use std::error::Error;
 use client::Request::*;
+use std::error::Error;
 
 pub mod client;
 pub mod config;
