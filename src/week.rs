@@ -3,8 +3,10 @@ use term_table::{row::Row, table_cell::Alignment, table_cell::TableCell};
 use term_table::{TableBuilder, TableStyle};
 use textwrap;
 
+use crate::forecast::Doc;
+
 /// render creates an ascii table from a `Doc`.
-pub fn render(doc: &crate::forecast::Doc, style: TableStyle) -> String {
+pub fn render(doc: &Doc, style: TableStyle) -> String {
     let header = Row::new(vec![
         TableCell::new("Period"),
         TableCell::new_with_alignment("Temp", 1, Alignment::Right),

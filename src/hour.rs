@@ -4,8 +4,10 @@ use term_table::{row::Row, table_cell::Alignment, table_cell::TableCell};
 use term_table::{TableBuilder, TableStyle};
 use textwrap;
 
+use crate::forecast::Doc;
+
 /// render creates an ascii table from a `Doc`.
-pub fn render(doc: &crate::forecast::Doc, style: TableStyle) -> String {
+pub fn render(doc: &Doc, style: TableStyle) -> String {
     let footer = Row::new(vec![
         TableCell::new("Date"),
         TableCell::new("Day"),
