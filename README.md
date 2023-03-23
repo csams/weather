@@ -1,11 +1,10 @@
 # Weather CLI
 
-This is a weather utility for the CLI that provides hourly and 7 day forecasts for the United States.
+This is a CLI weather utility that provides hourly and weekly forecasts for the United States.
 
 It first uses the [Geocoding Services API][geocoding] of [census.gov][census] to convert a free text street
-address to a latitude and longitude. It then uses those coordinates with
-`https://api.weather.gov/points/{lat},{lon}` to get the corresponding forecast grid. Finally, it passes the
-grid info to [api.weather.gov][api] to retrieve the forecast.
+address to a latitude and longitude. It then uses those coordinates to get the corresponding forecast grid
+from [api.weather.gov][api]. Finally, it uses the same API to retrieve the forecast for the grid.
 
 You can pass the address query as a string argument or set the environment variable `WX_DEFAULT_ADDRESS` as a
 fallback.
