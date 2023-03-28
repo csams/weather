@@ -1,6 +1,6 @@
 use std::error::Error;
 
-use serde::Deserialize;
+use serde::de::DeserializeOwned;
 
 type QueryParams<'a> = Vec<(&'a str, &'a str)>;
 
@@ -11,9 +11,8 @@ pub enum Request<'a> {
 }
 
 /// Get a json document from a URL and parse it into an object.
-pub fn fetch<T>(req: Request) -> Result<T, Box<dyn Error>>
-where
-    for<'a> T: Deserialize<'a>,
+// pub fn fetch<CoordDoc>(req: Request) -> Result<T, Box<dyn Error>>
+pub fn fetch<T: DeserializeOwned>(req: Request) -> Result<T, Box<dyn Error>>
 {
     let c = reqwest::blocking::Client::new();
     let obj: T = match req {
