@@ -10,15 +10,15 @@ You can pass the address query as a string argument or set the environment varia
 fallback.
 
 ```bash
-# week forecast
+# daytime and nighttime forecast for the week
 weather "4600 Silver Hill Rd, Washington, DC 20233"
 
-# hourly forecast
+# hourly forecast for the week
 weather --hourly "4600 Silver Hill Rd, Washington, DC 20233"
 ```
 
-This is a simple project for me to learn rust. It doesn't cache anything between invocations, and error
-reporting isn't very good.
+This is a simple project for me to learn rust. It doesn't retry or cache anything, and error reporting isn't
+very good.
 
 
 [api]: https://weather-gov.github.io/api/general-faqs
