@@ -7,24 +7,15 @@ use crate::forecast::Doc;
 
 /// render creates an ascii table from a `Doc`.
 pub fn render(doc: &Doc, style: TableStyle) -> String {
-    let header = Row::new(vec![
-        TableCell::new("Period"),
-        TableCell::new_with_alignment("Temp", 1, Alignment::Right),
-        TableCell::new_with_alignment("Precip", 1, Alignment::Right),
-        TableCell::new("Forecast"),
-        TableCell::new("Wind"),
-        TableCell::new("Details"),
-    ]);
-
-    let mut rows = vec![header];
-
-    rows.extend(doc.properties.periods.iter().map(|p| {
+    let mut rows = vec![];
+    rows.extend(doc.properties.periods.iter().rev().map(|p| {
         let mut temp = format!("{} F", p.temperature);
         temp = if p.is_daytime {
-            temp.red().to_string()
+            temp.red()
         } else {
-            temp.blue().to_string()
-        };
+            temp.blue()
+        }
+        .to_string();
 
         let short = textwrap::wrap(&p.short_forecast, 60).join("\n");
         let detail = textwrap::wrap(&p.detailed_forecast, 70).join("\n");
@@ -32,7 +23,9 @@ pub fn render(doc: &Doc, style: TableStyle) -> String {
         let precip = p
             .probability_of_precipitation
             .value
-            .map_or("".to_string(), |v| format!("{}%", v).green().to_string());
+            .map_or(String::from("0%"), |v| format!("{}%", v))
+            .green()
+            .to_string();
 
         Row::new(vec![
             TableCell::new(&p.name),
@@ -43,6 +36,16 @@ pub fn render(doc: &Doc, style: TableStyle) -> String {
             TableCell::new(detail),
         ])
     }));
+
+    let header = Row::new(vec![
+        TableCell::new("Period"),
+        TableCell::new_with_alignment("Temp", 1, Alignment::Right),
+        TableCell::new_with_alignment("Precip", 1, Alignment::Right),
+        TableCell::new("Forecast"),
+        TableCell::new("Wind"),
+        TableCell::new("Details"),
+    ]);
+    rows.push(header);
 
     TableBuilder::new().style(style).rows(rows).build().render()
 }
