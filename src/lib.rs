@@ -10,28 +10,34 @@ pub mod lookup;
 pub mod style;
 pub mod week;
 
+use client::Request::*;
+use retry::delay::{jitter, Exponential};
 use std::error::Error;
 
-use client::Request::*;
-
 pub fn run(cfg: config::Config) -> Result<(), Box<dyn Error>> {
-    let forecast_info = lookup::find(cfg.address.as_str())?;
+    let res = retry::retry(Exponential::from_millis(1000).map(jitter).take(3), || {
+        lookup::find(cfg.address.as_str()).and_then(|forecast_info|{
+            let url = if cfg.hourly {
+		forecast_info.endpoints.hourly_url
+            } else {
+		forecast_info.endpoints.weekly_url
+            };
 
-    let url = if cfg.hourly {
-        forecast_info.endpoints.hourly_url
-    } else {
-        forecast_info.endpoints.weekly_url
-    };
+	    client::fetch(URL(url.as_str())).and_then(|doc|{
+		let render = if cfg.hourly {
+		    hour::render
+		} else {
+		    week::render
+		};
 
-    let doc: forecast::Doc = client::fetch(URL(url.as_str()))?;
-
-    let render = if cfg.hourly {
-        hour::render
-    } else {
-        week::render
-    };
-
-    println!("{}", render(&doc, style::elegant()));
-    println!("Forecast for: {}", forecast_info.address);
-    Ok(())
+		println!("{}", render(&doc, style::elegant()));
+		println!("Forecast for: {}", forecast_info.address);
+		Ok(())
+	    })
+	})
+    });
+    match res {
+	Ok(r) => Ok(r),
+	Err(e) => Err(e.error),
+    }
 }
