@@ -7,5 +7,6 @@ United States. The files are provided by the [census bureau][data-files].
 
 `run.sh` both downloads the files and merges them.
 
+This data isn't used yet, but the idea is to speed up location lookup.
 
 [data-files]: https://www2.census.gov/geo/tiger/TIGER2022/
