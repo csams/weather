@@ -23,8 +23,7 @@ pub struct Endpoints {
 
 /// find the forecast information for the given street address query.
 pub fn find(query: &str) -> Result<ForecastInfo, Box<dyn Error>> {
-    let location = resolve_location(query)?;
-    lookup_forecast_info(location)
+    resolve_location(query).and_then(lookup_forecast_info)
 }
 
 /// Looks up latitude and longitude of the resolved street address for the given query.
