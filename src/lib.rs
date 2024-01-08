@@ -16,28 +16,30 @@ use std::error::Error;
 
 pub fn run(cfg: config::Config) -> Result<(), Box<dyn Error>> {
     let res = retry::retry(Exponential::from_millis(1000).map(jitter).take(3), || {
-        lookup::find(cfg.address.as_str()).and_then(|forecast_info|{
+        lookup::find(cfg.address.as_str()).and_then(|forecast_info| {
             let url = if cfg.hourly {
-		forecast_info.endpoints.hourly_url
+                forecast_info.endpoints.hourly_url
             } else {
-		forecast_info.endpoints.weekly_url
+                forecast_info.endpoints.weekly_url
             };
 
-	    client::fetch(URL(url.as_str())).and_then(|doc|{
-		let render = if cfg.hourly {
-		    hour::render
-		} else {
-		    week::render
-		};
+            client::fetch(URL(url.as_str())).and_then(|doc| {
+                let render = if cfg.hourly {
+                    hour::render
+                } else {
+                    week::render
+                };
 
-		println!("{}", render(&doc, style::elegant()));
-		println!("Forecast for: {}", forecast_info.address);
-		Ok(())
-	    })
-	})
+                println!("{}", render(&doc, style::elegant()));
+                println!("Forecast for: {}", forecast_info.address);
+                Ok(())
+            })
+        })
     });
+
+    // retry wraps errors, so we have to rebox them.
     match res {
-	Ok(r) => Ok(r),
-	Err(e) => Err(e.error),
+        Ok(r) => Ok(r),
+        Err(e) => Err(e.error),
     }
 }

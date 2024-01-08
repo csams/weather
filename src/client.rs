@@ -11,9 +11,7 @@ pub enum Request<'a> {
 }
 
 /// Get a json document from a URL and parse it into an object.
-// pub fn fetch<CoordDoc>(req: Request) -> Result<T, Box<dyn Error>>
-pub fn fetch<T: DeserializeOwned>(req: Request) -> Result<T, Box<dyn Error>>
-{
+pub fn fetch<T: DeserializeOwned>(req: Request) -> Result<T, Box<dyn Error>> {
     let c = reqwest::blocking::Client::new();
     let obj: T = match req {
         Request::URL(url) => c.get(url),
