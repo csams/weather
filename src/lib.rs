@@ -1,39 +1,41 @@
 //! weather is a library for fetching multi-day forecast information from `api.weather.gov` and
 //! rendering it.
 
+pub mod alerts;
 mod client;
 pub mod config;
 pub mod error;
 pub mod forecast;
-pub mod hour;
-pub mod lookup;
+pub mod hourly;
+pub mod location;
 pub mod style;
-pub mod week;
+pub mod weekly;
 
-use client::Request::*;
 use retry::delay::{jitter, Exponential};
 use std::error::Error;
 
 pub fn run(cfg: config::Config) -> Result<(), Box<dyn Error>> {
     let res = retry::retry(Exponential::from_millis(1000).map(jitter).take(3), || {
-        lookup::find(cfg.address.as_str()).and_then(|forecast_info| {
-            let url = if cfg.hourly {
-                forecast_info.endpoints.hourly_url
+        location::lookup(cfg.address.as_str()).and_then(|loc| {
+            if cfg.alerts {
+                alerts::lookup(&loc).and_then(|doc| {
+                    println!("{}", alerts::render(&doc, cfg.verbose));
+                    println!("Alerts for: {}", loc.address);
+                    Ok(())
+                })
             } else {
-                forecast_info.endpoints.weekly_url
-            };
+                forecast::lookup(&loc, cfg.hourly).and_then(|doc| {
+                    let render = if cfg.hourly {
+                        hourly::render
+                    } else {
+                        weekly::render
+                    };
 
-            client::fetch(URL(url.as_str())).and_then(|doc| {
-                let render = if cfg.hourly {
-                    hour::render
-                } else {
-                    week::render
-                };
-
-                println!("{}", render(&doc, style::elegant()));
-                println!("Forecast for: {}", forecast_info.address);
-                Ok(())
-            })
+                    println!("{}", render(&doc, style::elegant()));
+                    println!("Forecast for: {}", loc.address);
+                    Ok(())
+                })
+            }
         })
     });
 

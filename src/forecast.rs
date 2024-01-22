@@ -1,4 +1,45 @@
+use crate::client;
+use crate::client::Request::*;
+use crate::location::Location;
 use serde::Deserialize;
+use std::error::Error;
+
+/// Looks up the forecast endpoints to use for the given resolved location.
+pub fn lookup(location: &Location, hourly: bool) -> Result<Doc, Box<dyn Error>> {
+    let url = format!(
+        "https://api.weather.gov/points/{},{}",
+        location.coordinates.y, location.coordinates.x
+    );
+    let doc: PointsDoc = client::fetch(URL(url.as_str()))?;
+    let endpoints = doc.properties;
+    let url = if hourly {
+        endpoints.hourly_url
+    } else {
+        endpoints.weekly_url
+    };
+
+    client::fetch(URL(url.as_str()))
+}
+
+/// Contains the resolved address and the urls to use for getting weekly and hourly forecast data.
+pub struct ForecastInfo {
+    pub address: String,
+    pub endpoints: Endpoints,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct Endpoints {
+    #[serde(rename = "forecastHourly")]
+    pub hourly_url: String,
+
+    #[serde(rename = "forecast")]
+    pub weekly_url: String,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct PointsDoc {
+    pub properties: Endpoints,
+}
 
 /// Doc is the top level type returned from api.weather.gov's forecast endpoint. It contains a lot
 /// of data, but we only care about the properties object.
