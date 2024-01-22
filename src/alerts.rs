@@ -24,6 +24,7 @@ pub fn lookup(loc: &Location) -> Result<Doc, Box<dyn Error>> {
     ))
 }
 
+/// render creates a string from the alerts that's ready to print to the terminal
 pub fn render(doc: &Doc, verbose: bool) -> String {
     let mut rows = vec![];
 
@@ -31,7 +32,7 @@ pub fn render(doc: &Doc, verbose: bool) -> String {
         let props = &feature.properties;
 
         rows.push(format!("{}", props.headline));
-        rows.push(format!("{} / {}", props.severity, props.certainty));
+        rows.push(format!("{} | {} | {}", props.severity, props.certainty, props.urgency));
         rows.push(String::from(""));
         rows.push(format!("{}", props.description));
         rows.push(format!("{}", props.instruction));

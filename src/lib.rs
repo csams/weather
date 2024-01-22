@@ -1,5 +1,4 @@
-//! weather is a library for fetching multi-day forecast information from `api.weather.gov` and
-//! rendering it.
+//! weather is a library for fetching and rendering multi-day forecast information from `api.weather.gov`.
 
 pub mod alerts;
 mod client;
