@@ -15,6 +15,12 @@ weather "4600 Silver Hill Rd, Washington, DC 20233"
 
 # hourly forecast for the week
 weather --hourly "4600 Silver Hill Rd, Washington, DC 20233"
+
+# alerts
+weather --alerts "4600 Silver Hill Rd, Washington, DC 20233"
+
+# alerts with verbose area description
+weather --alerts --verbose "4600 Silver Hill Rd, Washington, DC 20233"
 ```
 
 This is a simple project for me to learn rust. It doesn't cache anything, and error reporting isn't very good.
