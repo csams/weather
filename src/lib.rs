@@ -16,25 +16,27 @@ use std::error::Error;
 pub fn run(cfg: config::Config) -> Result<(), Box<dyn Error>> {
     let res = retry::retry(Exponential::from_millis(1000).map(jitter).take(3), || {
         location::lookup(cfg.address.as_str()).and_then(|loc| {
-            if cfg.alerts {
-                alerts::lookup(&loc).and_then(|doc| {
-                    println!("{}", alerts::render(&doc, cfg.verbose));
-                    println!("Alerts for: {}", loc.address);
-                    Ok(())
-                })
-            } else {
-                forecast::lookup(&loc, cfg.hourly).and_then(|doc| {
-                    let render = if cfg.hourly {
-                        hourly::render
-                    } else {
-                        weekly::render
-                    };
+            forecast::lookup(&loc, cfg.hourly).and_then(|doc| {
+                let render = if cfg.hourly {
+                    hourly::render
+                } else {
+                    weekly::render
+                };
 
-                    println!("{}", render(&doc, style::elegant()));
-                    println!("Forecast for: {}", loc.address);
+                println!("Forecast for: {}\n", loc.address);
+                println!("{}", render(&doc, style::elegant()));
+
+                if cfg.include_alerts {
+                    alerts::lookup(&loc).and_then(|doc| {
+                        println!("");
+                        println!("Alerts for: {}\n", loc.address);
+                        println!("{}", alerts::render(&doc, cfg.verbose));
+                        Ok(())
+                    })
+                } else {
                     Ok(())
-                })
-            }
+                }
+            })
         })
     });
 
