@@ -49,7 +49,7 @@ pub fn render(doc: &Doc, verbose: bool) -> String {
 }
 
 /// Doc is the top level type returned from api.weather.gov's forecast endpoint. It contains a lot
-/// of data, but we only care about the properties object.
+/// of data, but we only care about the properties object of individual features.
 #[derive(Debug, Deserialize)]
 pub struct Doc {
     pub features: Vec<Feature>,

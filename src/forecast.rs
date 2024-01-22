@@ -21,12 +21,6 @@ pub fn lookup(location: &Location, hourly: bool) -> Result<Doc, Box<dyn Error>> 
     client::fetch(URL(url.as_str()))
 }
 
-/// Contains the resolved address and the urls to use for getting weekly and hourly forecast data.
-pub struct ForecastInfo {
-    pub address: String,
-    pub endpoints: Endpoints,
-}
-
 #[derive(Debug, Deserialize)]
 pub struct Endpoints {
     #[serde(rename = "forecastHourly")]
