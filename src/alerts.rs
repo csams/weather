@@ -30,7 +30,7 @@ pub fn render(doc: &Doc, verbose: bool) -> String {
 
     doc.features.iter().for_each(|feature| {
         let props = &feature.properties;
-
+        rows.push(format!("--------------------"));
         rows.push(format!("{}", props.headline));
         rows.push(format!("{} | {} | {}", props.severity, props.certainty, props.urgency));
         rows.push(String::from(""));
